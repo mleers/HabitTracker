@@ -10,9 +10,30 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var habits = Habits()
+
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView {
+            List {
+                ForEach(habits.items, id: \.name) { item in
+                    Text(item.name)
+                }
+                .onDelete(perform: removeItems)
+            }
+            .navigationTitle("Habit Tracker")
+            .toolbar {
+                Button {
+                    let habit = HabitItem(name: "Test", description: "Exercise", amount: 5)
+                    habits.items.append(habit)
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+        }
+    }
+
+    func removeItems(at offsets: IndexSet) {
+        habits.items.remove(atOffsets: offsets)
     }
 }
 

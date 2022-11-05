@@ -11,25 +11,43 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var habits = Habits()
+    @State private var showingAddHabit = false
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(habits.items, id: \.name) { item in
-                    Text(item.name)
+                ForEach($habits.items) { $habit in
+                    NavigationLink {
+                        HabitView(habit: $habit)
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(habit.name)
+                                    .font(.headline)
+                                Text(habit.description)
+                            }
+
+                            Spacer()
+
+                            Text(habit.amount, format: .number)
+                        }
+                    }
                 }
                 .onDelete(perform: removeItems)
             }
             .navigationTitle("Habit Tracker")
             .toolbar {
                 Button {
-                    let habit = HabitItem(name: "Test", description: "Exercise", amount: 5)
-                    habits.items.append(habit)
+                    showingAddHabit = true
                 } label: {
                     Image(systemName: "plus")
                 }
             }
+            .sheet(isPresented: $showingAddHabit) {
+                AddHabit(habits: habits)
+            }
         }
+        .preferredColorScheme(.dark)
     }
 
     func removeItems(at offsets: IndexSet) {

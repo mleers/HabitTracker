@@ -9,10 +9,9 @@
 
 import Foundation
 
-import Foundation
-
-struct HabitItem {
+struct HabitItem: Identifiable, Codable {
+    var id = UUID()
     let name: String
     let description: String
-    let amount: Int
+    var amount: Int
 }
